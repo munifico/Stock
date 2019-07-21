@@ -1,14 +1,17 @@
 import urllib.request
 from bs4 import BeautifulSoup
 import pyodbc
+from ms_access.connectDB import StockDB
 
 #주식정보 페이지 숫자만큼 range를 정해준다.
-conn = pyodbc.connect(Driver='{Microsoft Access Driver (*.mdb, *.accdb)}'
-#                      ,DBQ='C:\\Users\\SIDeok\\git\\WebscrapingForStock\\WebscrapingForStock\\ms_access\\StockDB.mdb')
-                      ,DBQ='C:\\Users\\SIDeok\\git\\WebscrapingForStock\\WebScrapingForStock\\ms_access\\StockDB.mdb')
-cs = conn.cursor()
+# conn = pyodbc.connect(Driver='{Microsoft Access Driver (*.mdb, *.accdb)}'
+# #                      ,DBQ='C:\\Users\\SIDeok\\git\\WebscrapingForStock\\WebscrapingForStock\\ms_access\\StockDB.mdb')
+#                       ,DBQ='C:\\Users\\SIDeok\\git\\WebscrapingForStock\\WebScrapingForStock\\ms_access\\StockDB.mdb')
+# cs = conn.cursor()
+conn = StockDB()
+cs = conn.getCursor()
 
-for i in range(1,192) :
+for i in range(1,2) :
     pageCont = urllib.request.urlopen('https://finance.naver.com/item/sise_day.nhn?code=148070&page=' + str(i));
     soup_m = BeautifulSoup(pageCont.read(), "html.parser");
     soup_tab = soup_m.find("table", {"class" : "type2"});
