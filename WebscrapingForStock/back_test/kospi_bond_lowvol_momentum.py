@@ -21,6 +21,9 @@ from ms_access.connectDB import StockDB;
 
 
 from pandas import Series, DataFrame; #pandas 라이브러리
+import math
+import calendar
+import pandas
 
 
 
@@ -43,6 +46,10 @@ VALUE = [];
 
 i = -1;
 value = 1; #초기 투입 금액
+
+# 연복리 산출을 위한 변수
+start_val = value;
+cycle_cnt = 0;
 
 max_val = value; # mdd 계산을 위한 변수
 min_val = value; # mdd 계산을 위한 변수
@@ -104,13 +111,14 @@ for info in rows :
     if mdd < (max_val - min_val)/max_val :
         mdd = (max_val - min_val)/max_val;
         mdd_dt = info[0].date().__str__();
-        
+    
+    cycle_cnt += 1;
 # 그래프 그리기
 # serAdjust = Series(adjustValue, adjustDate);
    
 register_matplotlib_converters();
    
-plt.plot(BASE_DT, VALUE,'r', label="1");
+plt.plot(BASE_DT, VALUE,'r', label="1", marker="*");
 # plt.plot(val_BASE_DT, val_9_1,'b', label="9:1");
 # plt.plot(val_BASE_DT, val_8_2,'r', label="8:2");
 # plt.plot(val_BASE_DT, val_7_3,'r', label="7:3");
@@ -119,7 +127,9 @@ plt.plot(BASE_DT, VALUE,'r', label="1");
 
 # plt.plot(serAdjust.index, serAdjust.values,'b', label="M/M");
 plt.legend(loc='upper left');
-plt.xlabel("start: " + str(VALUE[0]) + " ,end: " + str(VALUE[VALUE.__len__()-1]) + ", mdd: " + str(round(mdd*100, 2)) + "%("  + mdd_dt +")");
+plt.xticks(pandas.date_range(BASE_DT[0], BASE_DT[VALUE.__len__()-1], freq="Q-DEC"), rotation=70, fontsize="small"); #x축 단위 설정
+plt.xlabel("start: " + str(start_val) + " ,end: " + str(VALUE[VALUE.__len__()-1]) + "\n" + "mdd: " + str(round(mdd*100, 2)) + "%("  + mdd_dt +"), income ratio: " + str(round(math.pow(VALUE[VALUE.__len__()-1]/start_val, 1/(cycle_cnt/12)), 4)) );
+plt.ylabel("value");
 # plt.ylabel(adjustDate[0].__str__() + " ~ "  + adjustDate[adjustDate.__len__()-1].__str__() + ", rate: " + str(round(adjustValue[adjustValue.__len__()-1]/adjustValue[0], 2)**(1/((adjustDate[adjustDate.__len__()-1] - adjustDate[0]).days/365))));
    
 plt.show();
